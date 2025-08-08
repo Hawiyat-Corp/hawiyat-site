@@ -95,7 +95,7 @@ export default function StatsComponent({
       {/* Stats Grid with Enhanced Parallax */}
       <div
         ref={statsRef}
-        className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-0 stats-container ${theme}-theme`}
+        className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-0 stats-container  `}
         style={{
           transform: `translateY(${
             scrollY * 0.3 - parallaxIntensity

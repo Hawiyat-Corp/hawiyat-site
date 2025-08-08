@@ -187,9 +187,7 @@ const CustomerFeedback = () => {
 
   return (
     <div
-      className={`relative min-h-screen py-20 overflow-hidden ${
-        theme === "dark" ? "bg-black" : "bg-white"
-      }`}
+      className={`relative min-h-screen py-20 overflow-hidden `}
     >
       {/* Optimized parallax blobs */}
       <div
