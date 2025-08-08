@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { useTheme } from "@/context/ThemeContext";
+
 export default function UnifiedSupportFeatures() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [mounted, setMounted] = useState(false);
@@ -25,6 +26,7 @@ export default function UnifiedSupportFeatures() {
 
   const supportRef = useRef(null);
   const featuresRef = useRef(null);
+  const { theme, toggleTheme } = useTheme();
 
   const features = [
     {
@@ -135,10 +137,10 @@ export default function UnifiedSupportFeatures() {
   const getParallaxOffset = (speed = 1) => {
     return scrollY * speed * 0.5;
   };
-  const { theme, toggleTheme } = useTheme();
+
   if (!mounted) {
     return (
-      <div className=" bg-black flex items-center justify-center">
+      <div className={`${theme === "dark" ? "bg-black" : "bg-white"} flex items-center justify-center`}>
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-400"></div>
       </div>
     );
@@ -157,10 +159,9 @@ export default function UnifiedSupportFeatures() {
           alt="Floating Logo"
           width={64}
           height={64}
-          className={`absolute ${
-            theme === "dark" ? "opacity-20" : "opacity-10"
-          } top-56 md:top-20 left-20 w-16 h-16`}
+          className={`logo-image absolute top-56 md:top-20 left-20 w-16 h-16 ${theme === 'light' ? 'invert' : ''}`}
           style={{
+            opacity: theme === "dark" ? 0.4 : 0.3,
             transform: `translate(${getParallaxOffset(
               0.3
             )}px, ${getParallaxOffset(-0.2)}px) rotate(${scrollY * 0.5}deg)`,
@@ -172,10 +173,10 @@ export default function UnifiedSupportFeatures() {
           alt="Floating Logo"
           width={48}
           height={48}
-          className={`absolute ${
-            theme === "dark" ? "opacity-20" : "opacity-10"
-          } top-32 right-32 w-12 h-12`}
+          className={`logo-image absolute top-32 right-32 w-12 h-12  ${theme === 'light' ? 'invert' : ''}`}
+        
           style={{
+            opacity: theme === "dark" ? 0.4 : 0.3,
             transform: `translate(${getParallaxOffset(
               -0.2
             )}px, ${getParallaxOffset(0.3)}px) rotate(${
@@ -214,11 +215,7 @@ export default function UnifiedSupportFeatures() {
                 Out-of-the-box
               </span>
               <span
-                className={`inline-block transition-all duration-700 ease-out ${
-                  theme === "dark" || theme === "light"
-                    ? "support-gradient-text"
-                    : "light-support-gradient-text"
-                }`}
+                className={`inline-block transition-all duration-700 ease-out bg-gradient-to-r from-cyan-300 to-teal-400 bg-clip-text text-transparent` }
                 style={{
                   transform: supportVisible
                     ? "translateX(0px) scale(1)"
@@ -264,15 +261,13 @@ export default function UnifiedSupportFeatures() {
             {/* Get Started Button */}
             <Link href="/waitlist" className="w-full sm:w-auto">
               <button
-                className={`group relative w-full sm:w-auto h-14 px-10 text-lg font-medium rounded-2xl shadow-xl transition-all duration-300 hover:scale-105 flex items-center justify-center overflow-hidden ${"text-slate-900 bg-gradient-to-r from-cyan-400 to-teal-500 hover:from-cyan-300 hover:to-teal-400"}`}
+                className="group relative w-full sm:w-auto h-14 px-10 text-lg font-medium rounded-2xl shadow-xl transition-all duration-300 hover:scale-105 flex items-center justify-center overflow-hidden text-slate-900 bg-gradient-to-r from-cyan-400 to-teal-500 hover:from-cyan-300 hover:to-teal-400"
               >
-                <span className="relative z-10 flex items-center">
+                <span className="relative text-white z-10 flex items-center">
                   Get Started
                   <ArrowRight className="w-5 h-5 ml-2 transition-transform duration-300 group-hover:translate-x-1" />
                 </span>
-                <div
-                  className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 ${"bg-gradient-to-r from-cyan-300 to-teal-400"}`}
-                />
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-r from-cyan-300 to-teal-400" />
               </button>
             </Link>
 
@@ -323,16 +318,17 @@ export default function UnifiedSupportFeatures() {
       >
         <div
           className={`absolute z-[0] mx-auto top-0 h-full ${
-            theme === "dark" ? "opacity-100" : "opacity-30"
+            theme === "dark" ? "opacity-100" : "opacity-100"
           }`}
         >
-          <Image
-            className="w-full h-full object-cover"
-            src="/grid-mesh.svg"
-            width={2000}
-            height={2000}
-            alt="Grid mesh"
-          />
+            <Image
+        className={`w-full h-full object-cover ${theme === 'light' ? 'invert' : ''}`}
+        src="/grid-mesh.svg"
+        width={2000}
+        height={2000}
+        alt="Grid mesh"
+        loading="eager"
+      />
         </div>
 
         <div className="max-w-7xl mx-auto">
@@ -344,11 +340,9 @@ export default function UnifiedSupportFeatures() {
                   featuresVisible
                     ? "animate-slide-in-up"
                     : "opacity-0 translate-y-10"
-                } ${
-                  theme === "dark"
-                    ? "bg-gray-900/50 border border-gray-800/50"
-                    : "bg-white/90 border border-gray-200"
-                }`}
+                } 
+              
+                `}
                 style={{
                   animationDelay: featuresVisible ? `${0.1 * index}s` : "0s",
                   transform:
@@ -361,41 +355,41 @@ export default function UnifiedSupportFeatures() {
                 onMouseEnter={() => setHoveredCard(index)}
                 onMouseLeave={() => setHoveredCard(null)}
               >
-                {/* Enhanced hover background */}
+                {/* Enhanced hover background - Updated to use cyan/teal for both themes */}
                 <div
                   className={`absolute inset-0 rounded-2xl transition-all duration-700 ${
                     hoveredCard === index
                       ? theme === "dark"
                         ? "bg-gradient-to-br from-white/10 via-cyan-400/5 to-teal-500/10 backdrop-blur-sm"
-                        : "bg-gradient-to-br from-white/20 via-blue-400/5 to-indigo-500/10 backdrop-blur-sm"
+                        : "bg-gradient-to-br from-white/20 via-cyan-400/5 to-teal-500/10 backdrop-blur-sm"
                       : "bg-transparent"
                   }`}
                 />
 
-                {/* Animated border */}
+                {/* Animated border - Updated to use cyan for both themes */}
                 <div
                   className={`absolute inset-0 rounded-2xl transition-all duration-700 border ${
                     hoveredCard === index
                       ? theme === "dark"
                         ? "border-cyan-400/30 shadow-lg shadow-cyan-400/10"
-                        : "border-blue-400/30 shadow-lg shadow-blue-400/10"
+                        : "border-cyan-400/30 shadow-lg shadow-cyan-400/10"
                       : "border-transparent"
                   }`}
                 />
 
-                {/* Icon Container */}
+                {/* Icon Container - Updated to use cyan for both themes */}
                 <div
-                  className={`relative z-10 mb-6 p-4 w-fit rounded-2xl backdrop-blur-sm transition-all duration-300 group-hover:shadow-lg ${
+                  className={`relative z-10 mb-6 p-4 w-fit rounded-2xl backdrop-blur-sm transition-all duration-300 group-hover:shadow-lg border ${
                     theme === "dark"
                       ? "bg-black/40 border-gray-800/50 group-hover:border-cyan-400/30 group-hover:bg-black/60 group-hover:shadow-cyan-400/10"
-                      : "bg-white/80 border-gray-200/80 group-hover:border-blue-400/30 group-hover:bg-white/90 group-hover:shadow-blue-400/10"
+                      : "bg-white/80 border-gray-200/80 group-hover:border-cyan-400/30 group-hover:bg-white/90 group-hover:shadow-cyan-400/10"
                   }`}
                 >
                   <div
                     className={`transition-colors duration-300 ${
                       theme === "dark"
                         ? "text-gray-300 group-hover:text-cyan-400"
-                        : "text-gray-600 group-hover:text-blue-500"
+                        : "text-gray-600 group-hover:text-cyan-500"
                     }`}
                   >
                     {feature.icon}
@@ -456,6 +450,19 @@ export default function UnifiedSupportFeatures() {
           50% {
             transform: translateY(-10px);
           }
+        }
+
+        .logo-image {
+          transition: filter 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+          filter: ${theme === 'dark' 
+            ? 'brightness(0.9) contrast(1.1)' 
+            : 'brightness(1.1) contrast(1.0) invert(1)'};
+        }
+
+        .logo-image:hover {
+          filter: ${theme === 'dark' 
+            ? 'brightness(1.1) contrast(1.2)' 
+            : 'brightness(1.2) contrast(1.1) invert(1)'};
         }
 
         .support-gradient-text {

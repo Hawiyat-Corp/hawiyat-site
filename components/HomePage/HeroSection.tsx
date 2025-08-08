@@ -4,9 +4,11 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useTheme } from "@/context/ThemeContext";
 
 export default function HeroSection() {
   const [mounted, setMounted] = useState(false);
+  const { theme } = useTheme();
   
   // Memoize static content to prevent unnecessary re-renders
   const staticContent = useMemo(() => ({
@@ -16,11 +18,31 @@ export default function HeroSection() {
     description: "Hawiyat is the first AI-powered PaaS in the World that unifies DevOps, Cloud, Security and automation in one seamless platform"
   }), []);
 
+  // Memoize theme-dependent styles
+  const themeStyles = useMemo(() => {
+    const isDark = theme === 'dark';
+    return {
+      sectionBg: isDark ? 'bg-black' : 'bg-white',
+      textPrimary: isDark ? 'text-white' : 'text-gray-900',
+      textSecondary: isDark ? 'text-white/80' : 'text-gray-600',
+      badgeBg: isDark ? 'rgba(6, 182, 212, 0.1)' : 'rgba(6, 182, 212, 0.15)',
+      badgeBorder: isDark ? 'rgba(6, 182, 212, 0.2)' : 'rgba(6, 182, 212, 0.3)',
+      badgeHoverBg: isDark ? 'rgba(6, 182, 212, 0.2)' : 'rgba(6, 182, 212, 0.25)',
+      badgeHoverBorder: isDark ? 'rgba(6, 182, 212, 0.4)' : 'rgba(6, 182, 212, 0.5)',
+      gradientOverlay: isDark ? 'to-black/20' : 'to-white/20',
+      secondaryBtnBorder: isDark ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.2)',
+      secondaryBtnHoverBorder: isDark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.3)',
+      secondaryBtnHoverBg: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)',
+      ellipseFilter: isDark ? 'drop-shadow(0 0 100px rgba(6,182,212,0.4))' : 'drop-shadow(0 0 100px rgba(6,182,212,0.2))',
+      ellipseFilterHover: isDark ? 'drop-shadow(0 0 120px rgba(6,182,212,0.5))' : 'drop-shadow(0 0 120px rgba(6,182,212,0.3))'
+    };
+  }, [theme]);
+
   useEffect(() => {
     setMounted(true);
     
     // Use passive listeners for better performance
-    const handleMouseMove = (e:MouseEvent) => {
+    const handleMouseMove = (e: MouseEvent) => {
       // Use CSS custom properties for smooth hardware-accelerated animations
       document.documentElement.style.setProperty('--mouse-x', `${(e.clientX / window.innerWidth) * 100}%`);
       document.documentElement.style.setProperty('--mouse-y', `${(e.clientY / window.innerHeight) * 100}%`);
@@ -33,7 +55,7 @@ export default function HeroSection() {
 
     // Use passive listeners and throttle for performance
     let ticking = false;
-    const throttledMouseMove = (e:MouseEvent) => {
+    const throttledMouseMove = (e: MouseEvent) => {
       if (!ticking) {
         requestAnimationFrame(() => {
           handleMouseMove(e);
@@ -65,17 +87,17 @@ export default function HeroSection() {
 
   // Memoize loading component
   const loadingComponent = useMemo(() => (
-    <div className="min-h-[90vh]  flex items-center justify-center">
+    <div className={`min-h-[90vh] ${themeStyles.sectionBg} flex items-center justify-center`}>
       <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-400"></div>
     </div>
-  ), []);
+  ), [themeStyles.sectionBg]);
 
   if (!mounted) {
     return loadingComponent;
   }
 
   return (
-    <section className="min-h-[90vh]  relative overflow-hidden">
+    <section className={`min-h-[90vh] ${themeStyles.sectionBg} relative overflow-hidden transition-colors duration-500`}>
       {/* Enhanced Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {/* Enhanced Glowing Ellipse with Opacity Animation */}
@@ -93,25 +115,25 @@ export default function HeroSection() {
 
         {/* Enhanced Grid Mesh with Load Animation */}
         <div className="absolute z-[0] top-0 w-full h-full">
-          <Image
-            className="w-full h-full object-cover"
-            src="/grid-mesh.svg"
-            width={2000}
-            height={2000}
-            alt="Grid mesh"
-            loading="eager"
-          />
+        <Image
+        className={`w-full h-full object-cover ${theme === 'light' ? 'invert' : ''}`}
+        src="/grid-mesh.svg"
+        width={2000}
+        height={2000}
+        alt="Grid mesh"
+        loading="eager"
+      />
         </div>
 
         {/* Dynamic Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/20 gradient-breathing" />
+        <div className={`absolute inset-0 bg-gradient-to-b from-transparent via-transparent ${themeStyles.gradientOverlay} gradient-breathing`} />
       </div>
 
       {/* Main Content */}
       <main className="relative z-10 flex flex-col items-center justify-center min-h-[90vh] px-6 text-center">
         <div className="max-w-6xl mx-auto space-y-8 md:space-y-12">
           {/* Enhanced Badge */}
-          <div className=" badge-container">
+          <div className="badge-container">
             <Sparkles className="w-4 h-4 mr-2 sparkle-spin" />
             {staticContent.badge}
           </div>
@@ -161,28 +183,28 @@ export default function HeroSection() {
         </div>
       </main>
 
-      {/* Optimized CSS with hardware acceleration */}
+      {/* Optimized CSS with hardware acceleration and theme support */}
       <style jsx>{`
         /* Hardware acceleration and performance optimizations */
         .ellipse-optimized {
           opacity: 0;
           transform: translateY(30px) scale(0.95) translateZ(0);
-          filter: drop-shadow(0 0 0px rgba(6,182,212,0));
+          filter: ${theme === 'dark' ? 'drop-shadow(0 0 0px rgba(6,182,212,0))' : 'drop-shadow(0 0 0px rgba(6,182,212,0))'};
           animation: ellipse-opacity-reveal 3s ease-out 0.2s both, ellipse-gentle-float 6s ease-in-out infinite 3.2s;
           will-change: transform, opacity, filter;
           backface-visibility: hidden;
         }
 
-        /* Optimized badge */
+        /* Optimized badge with theme support */
         .badge-container {
           display: inline-flex;
           align-items: center;
           padding: 0.5rem 1.25rem;
           margin: 4rem 0 2rem;
           border-radius: 9999px;
-          background-color: rgba(6, 182, 212, 0.1);
+          background-color: ${themeStyles.badgeBg};
           color: rgb(6, 182, 212);
-          border: 1px solid rgba(6, 182, 212, 0.2);
+          border: 1px solid ${themeStyles.badgeBorder};
           backdrop-filter: blur(4px);
           transition: all 0.5s ease;
           animation: fade-in-up 1s ease-out 0.2s both;
@@ -205,8 +227,8 @@ export default function HeroSection() {
 
         .badge-container:hover {
           transform: scale(1.05) translateZ(0);
-          background-color: rgba(6, 182, 212, 0.2);
-          border-color: rgba(6, 182, 212, 0.4);
+          background-color: ${themeStyles.badgeHoverBg};
+          border-color: ${themeStyles.badgeHoverBorder};
         }
 
         .sparkle-spin {
@@ -214,14 +236,17 @@ export default function HeroSection() {
           will-change: transform;
         }
 
-        /* Optimized title animations */
+        /* Optimized title animations with theme support */
         .main-title {
           animation: fade-in-up 1.2s ease-out 0.4s both;
           will-change: transform, opacity;
         }
 
         .title-gradient {
-          background: linear-gradient(to right, white, white, rgba(255,255,255,0.7));
+          background: ${theme === 'dark' 
+            ? 'linear-gradient(to right, white, white, rgba(255,255,255,0.7))'
+            : 'linear-gradient(to right, #111827, #111827, rgba(17,24,39,0.7))'
+          };
           background-clip: text;
           -webkit-background-clip: text;
           color: transparent;
@@ -239,7 +264,10 @@ export default function HeroSection() {
         }
 
         .subtitle-build {
-          background: linear-gradient(to right, white, rgba(255,255,255,0.9));
+          background: ${theme === 'dark'
+            ? 'linear-gradient(to right, white, rgba(255,255,255,0.9))'
+            : 'linear-gradient(to right, #111827, rgba(17,24,39,0.9))'
+          };
           background-clip: text;
           -webkit-background-clip: text;
           color: transparent;
@@ -247,7 +275,10 @@ export default function HeroSection() {
         }
 
         .subtitle-deploy {
-          background: linear-gradient(to right, rgba(255,255,255,0.8), rgba(255,255,255,0.7));
+          background: ${theme === 'dark'
+            ? 'linear-gradient(to right, rgba(255,255,255,0.8), rgba(255,255,255,0.7))'
+            : 'linear-gradient(to right, rgba(17,24,39,0.8), rgba(17,24,39,0.7))'
+          };
           background-clip: text;
           -webkit-background-clip: text;
           color: transparent;
@@ -267,7 +298,7 @@ export default function HeroSection() {
         .description-text {
           font-size: 1.25rem;
           line-height: 1.6;
-          color: rgba(255, 255, 255, 0.8);
+          color: ${theme === 'dark' ? 'rgba(255, 255, 255, 0.8)' : 'rgba(75, 85, 99, 0.9)'};
           max-width: 48rem;
           margin: 0 auto;
           transition: color 1s ease;
@@ -288,10 +319,10 @@ export default function HeroSection() {
         }
 
         .description-text:hover {
-          color: rgba(255, 255, 255, 0.9);
+          color: ${theme === 'dark' ? 'rgba(255, 255, 255, 0.9)' : 'rgba(55, 65, 81, 1)'};
         }
 
-        /* Optimized CTA buttons */
+        /* Optimized CTA buttons with theme support */
         .cta-buttons {
           display: flex;
           flex-direction: column;
@@ -335,7 +366,7 @@ export default function HeroSection() {
 
         .cta-primary {
           background: linear-gradient(to right, #22d3ee, #14b8a6);
-          color: rgb(15, 23, 42);
+          color: ${theme === 'dark' ? 'rgb(15, 23, 42)' : 'rgb(255, 255, 255)'};
           box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
         }
 
@@ -345,15 +376,15 @@ export default function HeroSection() {
         }
 
         .cta-secondary {
-          border: 2px solid rgba(255, 255, 255, 0.3);
-          color: white;
+          border: 2px solid ${themeStyles.secondaryBtnBorder};
+          color: ${theme === 'dark' ? 'white' : '#111827'};
           background: transparent;
           backdrop-filter: blur(4px);
         }
 
         .cta-secondary:hover {
-          border-color: rgba(255, 255, 255, 0.5);
-          background-color: rgba(255, 255, 255, 0.05);
+          border-color: ${themeStyles.secondaryBtnHoverBorder};
+          background-color: ${themeStyles.secondaryBtnHoverBg};
           transform: scale(1.05) translateZ(0);
         }
 
@@ -367,18 +398,18 @@ export default function HeroSection() {
           100% { 
             opacity: 1;
             transform: translateY(0px) scale(1) translateZ(0);
-            filter: drop-shadow(0 0 100px rgba(6,182,212,0.4));
+            filter: ${themeStyles.ellipseFilter};
           }
         }
 
         @keyframes ellipse-gentle-float {
           0%, 100% { 
             transform: translateY(0px) scale(1) translateZ(0); 
-            filter: drop-shadow(0 0 100px rgba(6,182,212,0.4));
+            filter: ${themeStyles.ellipseFilter};
           }
           50% { 
             transform: translateY(-8px) scale(1.01) translateZ(0); 
-            filter: drop-shadow(0 0 120px rgba(6,182,212,0.5));
+            filter: ${themeStyles.ellipseFilterHover};
           }
         }
 

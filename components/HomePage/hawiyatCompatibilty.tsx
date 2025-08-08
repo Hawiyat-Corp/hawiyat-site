@@ -162,7 +162,8 @@ export default function HawiyatCompatibility() {
                   alt="Deploy your AI agent"
                   width={192}
                   height={192}
-                  className="rounded-xl w-full h-full object-cover"
+                  className={`rounded-xl w-full h-full object-cover ${theme === 'light' ? 'invert' : ''}`}
+               
                   priority
                 />
               </div>
@@ -219,7 +220,7 @@ export default function HawiyatCompatibility() {
                   alt="Compatible with any framework"
                   width={192}
                   height={192}
-                  className="rounded-xl w-full h-full object-cover"
+                  className={`rounded-xl w-full h-full object-cover ${theme === 'light' ? 'invert' : ''}`}
                   priority
                 />
               </div>
@@ -276,7 +277,7 @@ export default function HawiyatCompatibility() {
                   alt="Deploy any complex app"
                   width={192}
                   height={192}
-                  className="rounded-xl w-full h-full object-cover"
+                  className={`rounded-xl w-full h-full object-cover ${theme === 'light' ? 'invert' : ''}`}
                   priority
                 />
               </div>
@@ -307,6 +308,7 @@ export default function HawiyatCompatibility() {
             }`}
           >
             <Image
+            
               className="w-full h-full object-cover"
               src="/grid-mesh.svg"
               width={2000}

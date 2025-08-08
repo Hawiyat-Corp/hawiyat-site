@@ -187,7 +187,9 @@ const CustomerFeedback = () => {
 
   return (
     <div
-      className={`relative min-h-screen py-20 overflow-hidden `}
+      className={`relative min-h-screen py-20 overflow-hidden ${
+        theme === "dark" ? "bg-black" : "bg-white"
+      }`}
     >
       {/* Optimized parallax blobs */}
       <div
@@ -278,7 +280,7 @@ const CustomerFeedback = () => {
                 ${
                   theme === "dark"
                     ? "bg-gray-900/50 hover:bg-gray-800/50"
-                    : "bg-white/90 hover:bg-white border border-gray-200"
+                    : "bg-white/90 hover:bg-white"
                 }`}
                 style={getCardStyle(index, visibleCards.has(index))}
               >

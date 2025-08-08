@@ -134,7 +134,7 @@ export default function RootLayout({
           gtag('config', 'G-L3YHRGB5E3');`}
         </Script>
       </head>
-      <body className={`${spaceGrotesk.className} overflow-auto`}>
+      <body className={`${spaceGrotesk.className}   toverflow-auto`}>
         <Providers>
           <NavBar />
           {children}

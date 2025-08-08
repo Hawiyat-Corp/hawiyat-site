@@ -1,62 +1,91 @@
-import { useTheme } from "@/context/ThemeContext";
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState, useMemo } from "react"
+import { useTheme } from "@/context/ThemeContext"
 
 interface StatsComponentProps {
-  isVisible: boolean;
-  scrollY: number;
+  isVisible: boolean
+  scrollY: number
 }
 
-export default function StatsComponent({
-  isVisible,
-  scrollY,
-}: StatsComponentProps) {
-  const { theme, toggleTheme } = useTheme();
-  const statsRef = useRef<HTMLDivElement>(null);
-  const [intersectionRatio, setIntersectionRatio] = useState(0);
-  const [cardVisibility, setCardVisibility] = useState<boolean[]>([
-    false,
-    false,
-    false,
-    false,
-  ]);
+export default function StatsComponent({ isVisible, scrollY }: StatsComponentProps) {
+  const statsRef = useRef<HTMLDivElement>(null)
+  const [intersectionRatio, setIntersectionRatio] = useState(0)
+  const [cardVisibility, setCardVisibility] = useState<boolean[]>([false, false, false, false])
+  const { theme } = useTheme()
+
+  // Memoize theme-dependent styles
+  const themeStyles = useMemo(() => {
+    const isDark = theme === 'dark'
+    return {
+      cardBorder: isDark ? '#1a1a1a' : '#e5e7eb',
+      cardBorderRight: isDark ? '#333' : '#d1d5db',
+      cardHoverBg: isDark ? '#111111' : '#f9fafb',
+      cardHoverBorder: isDark ? '#333' : '#9ca3af',
+      numberColor: isDark ? '#ffffff' : '#111827',
+      numberHoverColor: isDark ? '#40e0ff' : '#0ea5e9',
+      descriptionColor: isDark ? '#888888' : '#6b7280',
+      descriptionHoverColor: isDark ? '#cccccc' : '#374151',
+      companyColor: isDark ? '#666666' : '#9ca3af',
+      companyHoverColor: isDark ? '#40e0ff' : '#0ea5e9',
+      glowEffect: isDark ? 'rgba(64, 224, 255, 0.2)' : 'rgba(14, 165, 233, 0.15)',
+      shimmerGradient: isDark 
+        ? 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.03), rgba(64, 224, 255, 0.02), transparent)'
+        : 'linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.02), rgba(14, 165, 233, 0.03), transparent)',
+      radialHover: isDark
+        ? 'radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(64, 224, 255, 0.1) 0%, rgba(64, 224, 255, 0.05) 20%, transparent 60%)'
+        : 'radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(14, 165, 233, 0.08) 0%, rgba(14, 165, 233, 0.04) 20%, transparent 60%)',
+      particleColor: isDark ? 'rgba(64, 224, 255, 0.6)' : 'rgba(14, 165, 233, 0.5)',
+      boxShadow: isDark 
+        ? '0 20px 40px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(64, 224, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
+        : '0 20px 40px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(14, 165, 233, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.8)',
+      textShadow: isDark 
+        ? '0 0 20px rgba(64, 224, 255, 0.3)'
+        : '0 0 10px rgba(14, 165, 233, 0.2)',
+      textShadowHover: isDark
+        ? '0 0 30px rgba(64, 224, 255, 0.6), 0 0 60px rgba(64, 224, 255, 0.3)'
+        : '0 0 20px rgba(14, 165, 233, 0.4), 0 0 40px rgba(14, 165, 233, 0.2)',
+      companyShadowHover: isDark 
+        ? '0 0 10px rgba(64, 224, 255, 0.3)'
+        : '0 0 8px rgba(14, 165, 233, 0.2)'
+    }
+  }, [theme])
 
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           // Update intersection ratio for parallax effects
-          setIntersectionRatio(entry.intersectionRatio);
-
+          setIntersectionRatio(entry.intersectionRatio)
+          
           // Trigger staggered card animations when in view
           if (entry.isIntersecting && entry.intersectionRatio > 0.3) {
             stats.forEach((_, index) => {
               setTimeout(() => {
-                setCardVisibility((prev) => {
-                  const newVisibility = [...prev];
-                  newVisibility[index] = true;
-                  return newVisibility;
-                });
-              }, index * 150); // Staggered animation delay
-            });
+                setCardVisibility(prev => {
+                  const newVisibility = [...prev]
+                  newVisibility[index] = true
+                  return newVisibility
+                })
+              }, index * 150) // Staggered animation delay
+            })
           }
-        });
+        })
       },
       {
         threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],
-        rootMargin: "-10% 0px -10% 0px",
+        rootMargin: "-10% 0px -10% 0px"
       }
-    );
+    )
 
     if (statsRef.current) {
-      observer.observe(statsRef.current);
+      observer.observe(statsRef.current)
     }
 
     return () => {
       if (statsRef.current) {
-        observer.unobserve(statsRef.current);
+        observer.unobserve(statsRef.current)
       }
-    };
-  }, []);
+    }
+  }, [])
 
   const stats = [
     {
@@ -80,49 +109,49 @@ export default function StatsComponent({
     {
       percentage: "87%",
       description: "decrease in build times.",
-      company: "It soulution",
+      company: "It solution",
       delay: 0.4,
     },
-  ];
+  ]
 
   // Calculate dynamic parallax values based on intersection
-  const parallaxIntensity = intersectionRatio * 50;
-  const cardRotation = (intersectionRatio - 0.5) * 2; // Subtle 3D rotation
-  const scaleEffect = 0.95 + intersectionRatio * 0.05; // Subtle scale effect
+  const parallaxIntensity = intersectionRatio * 50
+  const cardRotation = (intersectionRatio - 0.5) * 2 // Subtle 3D rotation
+  const scaleEffect = 0.95 + (intersectionRatio * 0.05) // Subtle scale effect
 
   return (
     <>
       {/* Stats Grid with Enhanced Parallax */}
-      <div
+      <div 
         ref={statsRef}
-        className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-0 stats-container  `}
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-0 stats-container"
         style={{
-          transform: `translateY(${
-            scrollY * 0.3 - parallaxIntensity
-          }px) scale(${scaleEffect})`,
-          transformStyle: "preserve-3d",
+          transform: `translateY(${scrollY * 0.3 - parallaxIntensity}px) scale(${scaleEffect})`,
+          transformStyle: 'preserve-3d',
         }}
       >
         {stats.map((stat, index) => (
           <div
             key={index}
-            className={`stat-card ${
-              cardVisibility[index] ? "stat-visible" : ""
-            }`}
-            style={{
+            className={`stat-card ${cardVisibility[index] ? "stat-visible" : ""}`}
+            style={{ 
               animationDelay: `${stat.delay}s`,
-              transform: `translateZ(${intersectionRatio * 20}px) rotateX(${
-                cardRotation * (index % 2 === 0 ? 1 : -1)
-              }deg)`,
+              transform: `translateZ(${intersectionRatio * 20}px) rotateX(${cardRotation * (index % 2 === 0 ? 1 : -1)}deg)`,
             }}
           >
             <div className="stat-content group">
               <div className="stat-number-container">
-                <div className="stat-number">{stat.percentage}</div>
+                <div className="stat-number">
+                  {stat.percentage}
+                </div>
                 <div className="stat-glow"></div>
               </div>
-              <div className="stat-description">{stat.description}</div>
-              <div className="stat-company">{stat.company}</div>
+              <div className="stat-description">
+                {stat.description}
+              </div>
+              <div className="stat-company">
+                {stat.company}
+              </div>
               <div className="stat-particles">
                 {[...Array(5)].map((_, i) => (
                   <div key={i} className={`particle particle-${i}`}></div>
@@ -134,12 +163,13 @@ export default function StatsComponent({
       </div>
 
       <style jsx>{`
-        /* Shared Base Styles */
+        /* Enhanced Stats Container */
         .stats-container {
           perspective: 1000px;
           transform-style: preserve-3d;
         }
 
+        /* Clean Stats Card Animations */
         .stat-card {
           opacity: 0;
           transform: translateY(30px);
@@ -153,6 +183,9 @@ export default function StatsComponent({
 
         .stat-content {
           padding: 3rem 2rem;
+          border: 1px solid ${themeStyles.cardBorder};
+          border-top: none;
+          border-right: 1px solid ${themeStyles.cardBorderRight};
           transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
           position: relative;
           overflow: hidden;
@@ -163,25 +196,31 @@ export default function StatsComponent({
           transform-style: preserve-3d;
         }
 
-        /* Shared Hover Effects */
+        .stat-content:last-child {
+          border-right: 1px solid ${themeStyles.cardBorder};
+        }
+
+        /* Enhanced hover effects with multiple layers */
         .stat-content::before {
-          content: "";
+          content: '';
           position: absolute;
           top: 0;
           left: -100%;
           width: 100%;
           height: 100%;
+          background: ${themeStyles.shimmerGradient};
           transition: left 1s cubic-bezier(0.16, 1, 0.3, 1);
           z-index: 1;
         }
 
         .stat-content::after {
-          content: "";
+          content: '';
           position: absolute;
           top: 0;
           left: 0;
           right: 0;
           bottom: 0;
+          background: ${themeStyles.radialHover};
           opacity: 0;
           transition: opacity 0.6s ease;
           pointer-events: none;
@@ -197,10 +236,13 @@ export default function StatsComponent({
         }
 
         .stat-content:hover {
+          background: ${themeStyles.cardHoverBg};
+          border-color: ${themeStyles.cardHoverBorder};
           transform: translateY(-5px) translateZ(20px);
+          box-shadow: ${themeStyles.boxShadow};
         }
 
-        /* Shared Number Styles */
+        /* Enhanced number with glow effect */
         .stat-number-container {
           position: relative;
           display: inline-block;
@@ -210,10 +252,12 @@ export default function StatsComponent({
         .stat-number {
           font-size: 3.5rem;
           font-weight: 700;
+          color: ${themeStyles.numberColor};
           transition: all 0.6s ease;
           line-height: 1;
           position: relative;
           z-index: 2;
+          text-shadow: ${themeStyles.textShadow};
         }
 
         .stat-glow {
@@ -223,6 +267,7 @@ export default function StatsComponent({
           transform: translate(-50%, -50%);
           width: 120%;
           height: 120%;
+          background: radial-gradient(circle, ${themeStyles.glowEffect} 0%, transparent 70%);
           opacity: 0;
           transition: all 0.8s ease;
           z-index: 1;
@@ -231,7 +276,9 @@ export default function StatsComponent({
         }
 
         .stat-content:hover .stat-number {
+          color: ${themeStyles.numberHoverColor};
           transform: scale(1.05);
+          text-shadow: ${themeStyles.textShadowHover};
         }
 
         .stat-content:hover .stat-glow {
@@ -239,8 +286,8 @@ export default function StatsComponent({
           transform: translate(-50%, -50%) scale(1.2);
         }
 
-        /* Shared Text Styles */
         .stat-description {
+          color: ${themeStyles.descriptionColor};
           font-size: 1rem;
           line-height: 1.5;
           margin-bottom: 1.5rem;
@@ -251,10 +298,12 @@ export default function StatsComponent({
         }
 
         .stat-content:hover .stat-description {
+          color: ${themeStyles.descriptionHoverColor};
           transform: translateY(-2px);
         }
 
         .stat-company {
+          color: ${themeStyles.companyColor};
           font-size: 0.9rem;
           font-weight: 500;
           letter-spacing: 0.025em;
@@ -265,10 +314,12 @@ export default function StatsComponent({
         }
 
         .stat-content:hover .stat-company {
+          color: ${themeStyles.companyHoverColor};
           transform: translateY(-2px);
+          text-shadow: ${themeStyles.companyShadowHover};
         }
 
-        /* Shared Particles */
+        /* Floating particles effect */
         .stat-particles {
           position: absolute;
           top: 0;
@@ -283,36 +334,17 @@ export default function StatsComponent({
           position: absolute;
           width: 2px;
           height: 2px;
+          background: ${themeStyles.particleColor};
           border-radius: 50%;
           opacity: 0;
           transition: all 2s ease-in-out;
         }
 
-        .particle-0 {
-          top: 20%;
-          left: 10%;
-          animation-delay: 0s;
-        }
-        .particle-1 {
-          top: 40%;
-          right: 15%;
-          animation-delay: 0.4s;
-        }
-        .particle-2 {
-          bottom: 30%;
-          left: 20%;
-          animation-delay: 0.8s;
-        }
-        .particle-3 {
-          top: 60%;
-          right: 25%;
-          animation-delay: 1.2s;
-        }
-        .particle-4 {
-          bottom: 20%;
-          right: 10%;
-          animation-delay: 1.6s;
-        }
+        .particle-0 { top: 20%; left: 10%; animation-delay: 0s; }
+        .particle-1 { top: 40%; right: 15%; animation-delay: 0.4s; }
+        .particle-2 { bottom: 30%; left: 20%; animation-delay: 0.8s; }
+        .particle-3 { top: 60%; right: 25%; animation-delay: 1.2s; }
+        .particle-4 { bottom: 20%; right: 10%; animation-delay: 1.6s; }
 
         .stat-content:hover .particle {
           opacity: 1;
@@ -320,216 +352,34 @@ export default function StatsComponent({
         }
 
         @keyframes float {
-          0%,
-          100% {
+          0%, 100% { 
             transform: translateY(0px) scale(1);
             opacity: 0.6;
           }
-          50% {
+          50% { 
             transform: translateY(-20px) scale(1.2);
             opacity: 1;
           }
         }
 
-        .light-theme .stat-content {
-          padding: 3rem 2rem;
-          border-top: none;
-
-          transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-          position: relative;
-          overflow: hidden;
-          min-height: 200px;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          transform-style: preserve-3d;
-          border: 1px solid #e5e7eb;
-
-          border-right: 1px solid #e5e7eb;
-          background: transparent;
-        }
-
-        .light-theme .stat-content:last-child {
-          border-right: 1px solid #e5e7eb;
-        }
-
-        .light-theme .stat-number {
-          color: #1f2937;
-          text-shadow: 0 0 10px rgba(59, 130, 246, 0.2);
-        }
-
-        .light-theme .stat-description {
-          color: #6b7280;
-        }
-
-        .light-theme .stat-company {
-          color: #9ca3af;
-        }
-
-        .light-theme .stat-content:hover {
-          background: #f9fafb;
-          border-color: #d1d5db;
-          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1),
-            0 0 0 1px rgba(59, 130, 246, 0.1),
-            inset 0 1px 0 rgba(255, 255, 255, 0.9);
-        }
-
-        .light-theme .stat-content:hover .stat-number {
-          color: #3b82f6;
-          text-shadow: 0 0 20px rgba(59, 130, 246, 0.3),
-            0 0 40px rgba(59, 130, 246, 0.1);
-        }
-
-        .light-theme .stat-content:hover .stat-description {
-          color: #4b5563;
-        }
-
-        .light-theme .stat-content:hover .stat-company {
-          color: #3b82f6;
-          text-shadow: 0 0 8px rgba(59, 130, 246, 0.2);
-        }
-
-        .light-theme .stat-glow {
-          background: radial-gradient(
-            circle,
-            rgba(59, 130, 246, 0.15) 0%,
-            transparent 70%
-          );
-        }
-
-        .light-theme .particle {
-          background: rgba(59, 130, 246, 0.4);
-        }
-
-        .light-theme .stat-content::before {
-          background: linear-gradient(
-            90deg,
-            transparent,
-            rgba(255, 255, 255, 0.1),
-            rgba(59, 130, 246, 0.05),
-            transparent
-          );
-        }
-
-        .light-theme .stat-content::after {
-          background: radial-gradient(
-            circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
-            rgba(59, 130, 246, 0.1) 0%,
-            rgba(59, 130, 246, 0.05) 20%,
-            transparent 60%
-          );
-        }
-
-        /* Dark Theme Specific Styles */
-        .dark-theme .stat-content {
-          padding: 3rem 2rem;
-          border: 1px solid #1a1a1a;
-          border-top: none;
-          border-right: 1px solid #333;
-          transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-          position: relative;
-          overflow: hidden;
-          min-height: 200px;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          transform-style: preserve-3d;
-        }
-
-        .dark-theme .stat-content:last-child {
-          border-right: 1px solid #1a1a1a;
-        }
-
-        .dark-theme .stat-number {
-          color: #ffffff;
-          text-shadow: 0 0 20px rgba(64, 224, 255, 0.3);
-        }
-
-        .dark-theme .stat-description {
-          color: #888888;
-        }
-
-        .dark-theme .stat-company {
-          color: #666666;
-        }
-
-        .dark-theme .stat-content:hover {
-          background: #111111;
-          border-color: #333;
-          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3),
-            0 0 0 1px rgba(64, 224, 255, 0.1),
-            inset 0 1px 0 rgba(255, 255, 255, 0.1);
-        }
-
-        .dark-theme .stat-content:hover .stat-number {
-          color: #40e0ff;
-          text-shadow: 0 0 30px rgba(64, 224, 255, 0.6),
-            0 0 60px rgba(64, 224, 255, 0.3);
-        }
-
-        .dark-theme .stat-content:hover .stat-description {
-          color: #cccccc;
-        }
-
-        .dark-theme .stat-content:hover .stat-company {
-          color: #40e0ff;
-          text-shadow: 0 0 10px rgba(64, 224, 255, 0.3);
-        }
-
-        .dark-theme .stat-glow {
-          background: radial-gradient(
-            circle,
-            rgba(64, 224, 255, 0.2) 0%,
-            transparent 70%
-          );
-        }
-
-        .dark-theme .particle {
-          background: rgba(64, 224, 255, 0.6);
-        }
-
-        .dark-theme .stat-content::before {
-          background: linear-gradient(
-            90deg,
-            transparent,
-            rgba(255, 255, 255, 0.03),
-            rgba(64, 224, 255, 0.02),
-            transparent
-          );
-        }
-
-        .dark-theme .stat-content::after {
-          background: radial-gradient(
-            circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
-            rgba(64, 224, 255, 0.1) 0%,
-            rgba(64, 224, 255, 0.05) 20%,
-            transparent 60%
-          );
+        /* Simple intersection-based animations */
+        .stat-card.stat-visible {
+          animation: none;
         }
 
         /* Mobile Optimizations */
         @media (max-width: 1024px) {
           .stat-content {
-            border-right: 1px solid;
-            border-bottom: 1px solid;
+            border-right: 1px solid ${themeStyles.cardBorder};
+            border-bottom: 1px solid ${themeStyles.cardBorderRight};
+          }
+          
+          .stat-content:last-child {
+            border-bottom: 1px solid ${themeStyles.cardBorder};
           }
 
-          .light-theme .stat-content {
-            border-right-color: #e5e7eb;
-            border-bottom-color: #e5e7eb;
-          }
-
-          .dark-theme .stat-content {
-            border-right-color: #1a1a1a;
-            border-bottom-color: #333;
-          }
-
-          .light-theme .stat-content:last-child {
-            border-bottom-color: #e5e7eb;
-          }
-
-          .dark-theme .stat-content:last-child {
-            border-bottom-color: #1a1a1a;
+          .stat-card:nth-child(n).stat-visible {
+            animation: slideInFromLeft 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
           }
         }
 
@@ -537,22 +387,16 @@ export default function StatsComponent({
           .stat-number {
             font-size: 2.8rem;
           }
-
+          
           .stat-content {
             padding: 2rem 1.5rem;
             min-height: 160px;
-            border-bottom: 1px solid;
-            border-right: 1px solid;
+            border-bottom: 1px solid ${themeStyles.cardBorderRight};
+            border-right: 1px solid ${themeStyles.cardBorder};
           }
 
-          .light-theme .stat-content {
-            border-right-color: #e5e7eb;
-            border-bottom-color: #e5e7eb;
-          }
-
-          .dark-theme .stat-content {
-            border-right-color: #1a1a1a;
-            border-bottom-color: #333;
+          .stat-content:last-child {
+            border-bottom: 1px solid ${themeStyles.cardBorder};
           }
 
           .stat-content:hover {
@@ -568,7 +412,7 @@ export default function StatsComponent({
             transition-duration: 0.2s;
             animation: none !important;
           }
-
+          
           .stat-content:hover {
             transform: none;
           }
@@ -591,7 +435,27 @@ export default function StatsComponent({
         }
       `}</style>
 
-      {/* Rest of your component... */}
+      <script dangerouslySetInnerHTML={{
+        __html: `
+          // Enhanced mouse tracking for each card
+          if (typeof window !== 'undefined') {
+            document.addEventListener('DOMContentLoaded', function() {
+              const cards = document.querySelectorAll('.stat-content');
+              
+              cards.forEach(card => {
+                card.addEventListener('mousemove', function(e) {
+                  const rect = card.getBoundingClientRect();
+                  const x = ((e.clientX - rect.left) / rect.width) * 100;
+                  const y = ((e.clientY - rect.top) / rect.height) * 100;
+                  
+                  card.style.setProperty('--mouse-x', x + '%');
+                  card.style.setProperty('--mouse-y', y + '%');
+                });
+              });
+            });
+          }
+        `
+      }} />
     </>
-  );
+  )
 }

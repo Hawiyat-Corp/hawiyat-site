@@ -240,7 +240,7 @@ export default function ExtraFeatures() {
                     alt={card.alt}
                     width={192}
                     height={192}
-                    className="rounded-xl w-full h-full object-cover"
+                    className={`rounded-xl w-full h-full object-cover ${theme === 'light' ? 'invert' : ''}`}
                     priority
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                   />
@@ -273,8 +273,9 @@ export default function ExtraFeatures() {
                 : "opacity-20 md:opacity-50"
             }`}
           >
+         
             <Image
-              className="w-full h-full object-cover transform-gpu"
+               className={`w-full h-full object-cover transform-gpu ${theme === 'light' ? 'invert' : ''}`}
               src="/grid-mesh.svg"
               width={1000}
               height={1000}
@@ -292,7 +293,7 @@ export default function ExtraFeatures() {
             }`}
           >
             <Image
-              className="w-full h-full object-cover transform-gpu"
+               className={`w-full h-full object-cover transform-gpu ${theme === 'light' ? 'invert' : ''}`}
               src="/grid-mesh.svg"
               width={1000}
               height={1000}
