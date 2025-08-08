@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Space_Grotesk } from 'next/font/google';
 import NavBar from '@/components/NavBar';
+import {Providers} from "@/app/providers"; // or correct path to your Providers component
+import Script from "next/script";
 import './globals.css';
 
 const spaceGrotesk = Space_Grotesk({
