@@ -28,9 +28,9 @@ export default function Page() {
         <div className="min-w-full flex flex-col items-center max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl z-10">
 
           {/* Title - Responsive */}
-          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-normal 
+          <h1 className="text-4xl lg:text-5xl font-normal 
                         bg-gradient-to-b from-[rgba(255,255,255,1)] 
-                        to-[rgba(153,153,153,1)] bg-clip-text text-transparent
+                        to-[#1d1818] bg-clip-text text-transparent
                         mb-8 sm:mb-10 md:mb-12 text-center leading-tight">
             Checkout
           </h1>
@@ -38,11 +38,13 @@ export default function Page() {
 
 
 
-          <div className="p-3 w-3/4  rounded-3xl
-                          flex justify-center items-center">
+          <div className=" w-full md:w-3/4  rounded-3xl
+                          flex justify-center items-center
+                          wrap
+                          ">
 
-            <div className='flex justify-around items-center my-10 w-1/2'>
-              <CircleCheckBig size={48} className='text-green-600' /> <span className='text-3xl'> Payment Was Successful</span>
+            <div className='flex flex-col md:flex-row md:justify-evenly items-center my-10 gap-4 bg-geen-500'>
+              <CircleCheckBig size={48} className='text-green-600' /> <div className='text-2xl md:text-3xl'> Payment Was Successful</div>
             </div>
           </div>
 
