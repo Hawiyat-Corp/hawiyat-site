@@ -85,7 +85,7 @@ export default function Page() {
             if (!data.ok) throw new Error(data.error);
 
             window.location.href = data.approveLink;
-        } catch  {
+        } catch {
             setLoading(false);
         }
     }
@@ -113,7 +113,7 @@ export default function Page() {
     return (
         <>
 
-            <div className="min-h-screen w-screen flex justify-center items-center px-4 sm:px-6 lg:px-8 py-8">
+            <div className="min-h-screen w-screen flex justify-center items-center max-[660px]:px-0">
                 {/* Background Images - Responsive */}
                 <Image
                     className="fixed top-0 z-[-1] w-full h-full object-cover"
@@ -132,7 +132,7 @@ export default function Page() {
                 />
 
                 {/* Main Card Container */}
-                <div className="min-w-full flex flex-col items-center max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl z-10">
+                <div className="w-full flex flex-col items-center z-10 mt-20">
 
                     {/* Title - Responsive */}
                     <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-normal 
@@ -147,48 +147,80 @@ export default function Page() {
                         totalItems !== 0 ?
                             (
 
-                                <div className="p-3 w-3/4 bg-linear-to-bl from-[#2BFFFF]/10 via-[#2BFFFF]/2 to-[#2BFFFF]/6 rounded-3xl grid grid-cols-[3fr_2fr] px-5">
+                                <div className="p-3 w-3/4 bg-linear-to-bl from-[#2BFFFF]/10 via-[#2BFFFF]/2 to-[#2BFFFF]/6 rounded-3xl 
+                                                grid grid-cols-1 grid-rows-3 lg:grid-rows-1 lg:grid-cols-[3fr_2fr] px-5
+                                                max-[660px]:w-screen
+                                                ">
 
-                                    <div className=" pr-10 overflow-y-auto max-w-xl bg--200">
+                                    <div className="overflow-y-auto w-full bg-ose-200">
 
                                         {/* Vps card */}
 
                                         {
                                             cartItems.map((item, index) => {
 
-                                               
-                                                return (
-                                                    <div key={index} className="flex justify-between w-full gap-x-4
-                                            bg-linear-to-b from-[#fff]/8 to-[#fff]/0
-                                            border border-[#fff]/20 rounded-3xl px-4 mb-3
-                                            ">
 
-                                                        <div className="flex justify-around items-center h-20 grow">
-                                                            <span className="text-md font-semibold">{item.offer.title}</span>
-                                                            <span className="text-[#aaa] text-sm font-normal">vCPU: {item.offer.cpu}</span>
-                                                            <span className="text-[#aaa] text-sm font-normal">RAM: {item.offer.ram}</span>
-                                                            <span className="text-[#aaa] text-sm font-normal">Disk: {item.offer.storage}</span>
+                                                return (
+                                                    <div key={index} className="cursor-pointer hover:bg-white/10 transition flex justify-between
+                                                                                max-[660px]:flex-col max-[660px]:p-2 w-full gap-x-4
+                                                                                bg-linear-to-b from-[#fff]/8 to-[#fff]/0
+                                                                                border border-[#fff]/20 rounded-3xl px-4 mb-3
+                                                                                h-40 lg:h-20
+                                                                                ">
+
+                                                        <div className="flex justify-around items-center h-full grow max-[660px]:flex-col w-full">
+                                                            <span className="lg:text-md text-xl font-semibold">{item.offer.title}</span>
+                                                            <div className={`props-cont h-full flex max-[830px]:flex-col max-[1024px]:flex-row
+                                                                             max-[1100px]:flex-col  min-[1100px]:flex-row grow justify-around items-center
+                                                                             max-[660px]:flex-row max-[660px]:w-full
+                                                                            
+                                                                             `
+                                                            }>
+
+                                                                <span className="text-[#aaa] lg:text-sm lg:font-normal font-semibold">vCPU: <span className='text-white pl-2'> {item.offer.cpu}</span></span>
+                                                                <span className="text-[#aaa] lg:text-sm lg:font-normal font-semibold">RAM: <span className='text-white pl-2'> {item.offer.ram}</span></span>
+                                                                <span className="text-[#aaa] lg:text-sm lg:font-normal font-semibold">Disk: <span className='text-white pl-2'> {item.offer.storage}</span></span>
+                                                            </div>
 
                                                         </div>
 
 
                                                         {/* The price & Qty */}
 
-                                                        <div className="flex flex-col justify-evenly items-start">
+                                                        <div className="flex max-[660px]:hidden flex-col justify-evenly items-start">
                                                             <div className="flex justify-between w-full ">
 
-                                                                <span className="text-[#656565] font-medium text-md">Qty: {item.quantity}</span>
+                                                                <span className="text-[#aaa] font-medium text-md">Qty: {item.quantity}</span>
 
                                                                 {
                                                                     !approved &&
 
                                                                     <button className="cursor-pointer"
                                                                         onClick={() => removeFromCart(item.id)}>
-                                                                        <Trash2 className="w-4 text-red-500" />
+                                                                        <Trash2 className="w-4 text-red-500 hover:text-red-900 transition-all" />
                                                                     </button>
                                                                 }
                                                             </div>
-                                                            <span className="font-semibold">Price: {item.quantity * item.selectedTier.price} {item.selectedTier.currency}</span>
+                                                            <span className="font-semibold lg:text-sm text-xl">Price: {item.quantity * item.selectedTier.price} {item.selectedTier.currency}</span>
+                                                        </div>
+
+                                                        {/* Mobile delete and stuff button */}
+                                                        <div className="justify-between hidden max-[660px]:flex items-center ml-3">
+
+                                                            <div className="flex flex-col justify-between w-full ">
+
+                                                                <span className="text-[#aaa] font-medium text-md">Qty: {item.quantity}</span>
+                                                                <span className="font-semibold lg:text-sm text-xl">Price: {item.quantity * item.selectedTier.price} {item.selectedTier.currency}</span>
+
+                                                            </div>
+                                                            {
+                                                                !approved &&
+
+                                                                <button className="cursor-pointer"
+                                                                    onClick={() => removeFromCart(item.id)}>
+                                                                    <Trash2 className="w-10 text-red-500 hover:text-red-900 transition-all" />
+                                                                </button>
+                                                            }
                                                         </div>
 
                                                     </div>
@@ -200,11 +232,13 @@ export default function Page() {
 
 
                                     </div>
+                                    <div className='h-[1px] hidden max-[1024px]:block bg-white/30 mt-4'>
 
-                                    <div className="h-96 ml-9 flex justify-between items-center bg--300">
+                                    </div>
+                                    <div className="h-96 ml-9 flex justify-between items-center max-[1024px]:mt-8">
                                         {/* Holder container */}
 
-                                        <div className="h-[85%] min-w-px bg-white/30 mr-8">
+                                        <div className="h-[85%] hidden lg:block lg:visible min-w-px bg-white/30 mr-8">
 
                                         </div>
                                         <div className='gap-y-3 w-full md:w-3/ h-full bg--600'>
@@ -275,7 +309,7 @@ export default function Page() {
                                                                     />
                                                                     {
                                                                         approved ? "Confirm Payment" : "Pay with PayPal"
-                                                                    } 
+                                                                    }
                                                                 </span>
                                                             )
                                                     }
