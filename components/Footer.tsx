@@ -38,12 +38,12 @@ const Footer = () => {
       title: "Resources & Help",
       links: [
         { name: "Docs", href: "#" },
-        { name: "Pricing", href: "#" },
+        { name: "Pricing", href: "/Products" },
         { name: "Customers", href: "#" },
         { name: "Integrations", href: "#" },
-        { name: "Templates", href: "#" },
+        { name: "Templates", href: "/templates" },
         { name: "Guides", href: "#" },
-        { name: "Help", href: "#" }
+        { name: "Help", href: "/support" }
       ]
     },
     {
@@ -55,7 +55,7 @@ const Footer = () => {
         { name: "Partners", href: "#" },
         { name: "Blog", href: "#" },
         { name: "Contact Us", href: "#" },
-        { name: "Open Source", href: "#" },
+        { name: "Open Source", href: "https://github.com/Hawiyat-Corp" },
         { name: "Security", href: "#" },
         { name: "Privacy Policy", href: "#" }
       ]
